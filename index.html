@@ -188,10 +188,34 @@ hr{border:none;border-top:1px solid var(--border);margin:20px 0;}
       <div class="ptitle">產品資訊輸入</div>
       <div class="psub">填入產品資料，AI 將自動生成結構化分鏡腳本與廣告文案。</div>
       <div class="grid">
-        <div class="fgrp"><label>產品名稱 *</label><input type="text" id="pName" placeholder="例：輕量保溫杯 500ml"></div>
-        <div class="fgrp"><label>產品類別</label><select id="pCat"><option>生活用品</option><option>保健食品</option><option>美妝保養</option><option>3C配件</option><option>服飾配件</option><option>食品飲料</option><option>家居寢具</option><option>運動健身</option><option>其他</option></select></div>
-        <div class="fgrp full"><label>主要賣點 *（輸入後按 Enter）</label><div class="tag-wrap" id="spW"><input class="ti" id="spI" placeholder="輸入賣點後按 Enter"></div></div>
-        <div class="fgrp full"><label>SEO 關鍵字（輸入後按 Enter）</label><div class="tag-wrap" id="kwW"><input class="ti" id="kwI" placeholder="輸入關鍵字後按 Enter"></div></div>
+        <div class="fgrp"><label>產品名稱 *</label><input type="text" id="pName" placeholder="例：NP-FZ100 副廠相機電池"></div>
+        <div class="fgrp"><label>產品類別</label>
+          <select id="pCat">
+            <option value="充電電池｜3號4號電池">充電電池（3號/4號）</option>
+            <option value="副廠相機電池">副廠相機電池</option>
+            <option value="運動攝影周邊">運動攝影周邊（GoPro/運動攝影機配件）</option>
+            <option value="商品攝影棚｜小型攝影棚">小型商品攝影棚</option>
+            <option value="相機補光燈｜攝影燈">相機補光燈／攝影燈</option>
+            <option value="野外求生工具｜戶外裝備">野外求生小工具</option>
+            <option value="腳架｜攝影支架｜手機夾">腳架／攝影支架／手機夾</option>
+            <option value="其他攝影周邊">其他攝影周邊</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+        <div class="fgrp full" style="position:relative;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+            <label style="margin-bottom:0;">主要賣點 *（輸入後按 Enter）</label>
+            <button id="tplBtn" style="font-size:11px;padding:2px 10px;border-radius:20px;">📋 套用範本</button>
+          </div>
+          <div class="tag-wrap" id="spW"><input class="ti" id="spI" placeholder="輸入賣點後按 Enter"></div>
+        </div>
+        <div class="fgrp full">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+            <label style="margin-bottom:0;">SEO 關鍵字（輸入後按 Enter）</label>
+            <span style="font-size:11px;color:var(--err);font-weight:500;">⚠ 越精準越好，AI 會優先使用</span>
+          </div>
+          <div class="tag-wrap" id="kwW"><input class="ti" id="kwI" placeholder="輸入關鍵字後按 Enter，例：sony電池 a7系列"></div>
+        </div>
         <div class="fgrp full"><label>目標客群</label><input type="text" id="pAud" placeholder="例：25-40歲上班族女性，重視生活品質"></div>
         <div class="fgrp"><label>影片鏡頭數</label><select id="pSc"><option>5</option><option selected>6</option><option>7</option><option>8</option><option>10</option></select></div>
         <div class="fgrp"><label>影片長度</label><select id="pDu"><option>15秒</option><option selected>20秒</option><option>30秒</option></select></div>
@@ -292,7 +316,93 @@ function initTag(wId,iId){
   });
 }
 
-function gtags(wId){ return[...document.querySelectorAll('#'+wId+' .tag')].map(t=>t.childNodes[0].textContent.trim()); }
+// ===== CATEGORY TEMPLATES =====
+const TEMPLATES = {
+  '充電電池｜3號4號電池': {
+    sp: ['大容量高mAh', '可重複充電500次以上', '低自放電設計', '附充電器超值組合', '環保省錢'],
+    kw: ['充電電池', '3號充電電池', '4號充電電池', 'AA充電電池', 'AAA充電電池', '大容量充電電池', '低自放電'],
+    aud: '家庭用戶、玩具電池、遙控器用戶、節省電池費用的消費者',
+    tone: '強調省錢環保、長期使用超划算，對比一次性電池的浪費，結尾要有明確購買呼籲'
+  },
+  '副廠相機電池': {
+    sp: ['相容原廠規格', '足容量不縮水', '過充過放保護', '多機型相容', '價格只需原廠一半'],
+    kw: ['副廠電池', '相機電池', '副廠相機電池', '相容電池'],
+    aud: '攝影愛好者、攝影師、需要備用電池的相機用戶',
+    tone: '強調與原廠相容性、安全保護機制，讓買家放心，結尾強調性價比'
+  },
+  '運動攝影周邊': {
+    sp: ['輕巧好攜帶', '堅固防摔設計', '多角度安裝', '快拆方便', '相容多品牌'],
+    kw: ['運動相機配件', 'GoPro配件', '運動攝影周邊', '機車行車記錄', '自行車攝影支架'],
+    aud: '戶外運動愛好者、機車騎士、自行車騎士、極限運動玩家',
+    tone: '強調戶外使用場景、冒險感、安裝便利性，畫面要有動感'
+  },
+  '商品攝影棚｜小型攝影棚': {
+    sp: ['折疊收納方便', '內建LED補光', '多色背景可換', '拍出白底專業感', '適合電商賣家'],
+    kw: ['商品攝影棚', '小型攝影棚', '摺疊攝影棚', '拍照燈箱', '電商拍照', '白底攝影'],
+    aud: '電商賣家、小型商品攝影師、網拍賣家、手工藝品販售者',
+    tone: '示範拍攝前後對比效果，強調操作簡單、任何人都能拍出專業感，訴求省時省錢'
+  },
+  '相機補光燈｜攝影燈': {
+    sp: ['無段調光調色', 'CRI高顯色指數', '輕薄好攜帶', '冷暖色溫可調', 'USB充電方便'],
+    kw: ['補光燈', '攝影燈', '直播補光燈', 'LED攝影燈', '相機補光', '環形燈', '可調色溫'],
+    aud: '直播主、攝影師、YouTuber、電商拍攝、居家辦公視訊',
+    tone: '展示開燈前後的明顯差異，強調打光效果提升畫質，適合直播和拍攝多種場景'
+  },
+  '野外求生工具｜戶外裝備': {
+    sp: ['輕量耐用', '多功能合一', '緊急求生必備', '防水防摔', '口袋尺寸好攜帶'],
+    kw: ['野外求生', '求生工具', '戶外裝備', '登山裝備', '求生刀', '多功能工具', '露營必備'],
+    aud: '登山者、露營愛好者、戶外探險族、自駕旅行者',
+    tone: '強調關鍵時刻的可靠性、實用功能展示，營造戶外冒險感，讓人有想帶出門的慾望'
+  },
+  '腳架｜攝影支架｜手機夾': {
+    sp: ['穩固不晃動', '輕巧可攜帶', '高度角度可調', '快速安裝拆卸', '相容多裝置'],
+    kw: ['手機腳架', '攝影腳架', '直播支架', '手機夾', '相機腳架', '桌上型支架', '自拍腳架'],
+    aud: '直播主、自拍愛好者、攝影師、YouTuber、視訊會議用戶',
+    tone: '強調穩定性和多場景使用，展示各種安裝方式，訴求輕巧方便隨時帶著走'
+  },
+  '其他攝影周邊': {
+    sp: ['專業攝影師推薦', '高品質做工', '物超所值', '操作簡單', '提升拍攝品質'],
+    kw: ['攝影配件', '攝影周邊', '相機配件', '拍攝工具'],
+    aud: '攝影愛好者、專業攝影師、內容創作者',
+    tone: '強調提升拍攝品質，展示產品細節與使用方式，訴求專業感與性價比'
+  },
+  '其他': {
+    sp: [], kw: [], aud: '', tone: ''
+  }
+};
+
+function applyTemplate() {
+  const cat = document.getElementById('pCat').value;
+  const tpl = TEMPLATES[cat];
+  if (!tpl || (!tpl.sp.length && !tpl.kw.length)) return;
+
+  if (gtags('spW').length || gtags('kwW').length) {
+    if (!confirm('套用範本會清除目前已輸入的賣點和關鍵字，確定嗎？')) return;
+  }
+
+  // Clear existing tags
+  document.querySelectorAll('#spW .tag').forEach(t => t.remove());
+  document.querySelectorAll('#kwW .tag').forEach(t => t.remove());
+
+  // Add template tags
+  tpl.sp.forEach(v => addTagTo('spW', 'spI', v));
+  tpl.kw.forEach(v => addTagTo('kwW', 'kwI', v));
+  if (tpl.aud) document.getElementById('pAud').value = tpl.aud;
+  if (tpl.tone) document.getElementById('pTone').value = tpl.tone;
+}
+
+function addTagTo(wId, iId, text) {
+  const t = document.createElement('span'); t.className = 'tag';
+  const tx = document.createTextNode(text);
+  const x = document.createElement('span'); x.className = 'tx'; x.textContent = '×';
+  x.onclick = () => t.remove();
+  t.appendChild(tx); t.appendChild(x);
+  document.getElementById(wId).insertBefore(t, document.getElementById(iId));
+}
+
+document.getElementById('tplBtn').addEventListener('click', applyTemplate);
+
+
 
 // Setup
 document.getElementById('setupBtn').addEventListener('click', function(){
@@ -341,21 +451,35 @@ document.getElementById('genBtn').addEventListener('click', async function(){
   document.getElementById('genMsg').className='msg';
 
   const secs=pi.du.replace('秒','');
-  const prompt=`你是專業電商廣告影片腳本策劃師。根據以下資訊生成分鏡腳本。
+  const kwList = pi.kw.length ? pi.kw.join('、') : '無';
+  const prompt=`你是專業電商 Google Ads 廣告影片腳本策劃師，同時精通 SEO 和電商轉換率優化。請根據以下資訊生成高轉換率的廣告影片分鏡腳本。
 
+【產品資訊】
 產品名稱：${pi.name}
-類別：${pi.cat}
-賣點：${pi.sp.join('、')}
-SEO關鍵字：${pi.kw.join('、')||'無'}
-客群：${pi.aud||'一般消費者'}
-鏡頭數：${pi.sc}
-總長：${pi.du}（加總必須=${secs}秒）
-基調：${pi.tone||'自然有質感'}
+產品類別：${pi.cat}
+主要賣點：${pi.sp.join('、')}
+目標客群：${pi.aud||'一般消費者'}
+廣告訴求：${pi.tone||'自然有質感，強調性價比'}
 
-注意：使用真實產品白底照搭配AI動畫，不需真人出鏡。
+【SEO 關鍵字清單（最重要！）】
+${kwList}
 
-只回傳JSON，不要其他文字：
-{"scenes":[{"id":1,"type":"鏡頭類型","description":"畫面描述20-40字","duration":3,"adCopy":"字卡文案10-20字含關鍵字","motionNote":"Filmora動畫指示"}]}`;
+【SEO 關鍵字使用規則（必須嚴格遵守）】
+1. 每個鏡頭的 adCopy（字卡文案）都必須自然包含至少一個 SEO 關鍵字
+2. 關鍵字要融入自然語境，不能生硬堆砌
+3. 最重要的關鍵字（清單中前2-3個）要在影片前半段出現
+4. 結尾鏡頭的文案要包含最核心的關鍵字加上行動呼籲
+5. 關鍵字的完整詞組優先（例如「充電電池」比單獨「電池」更好）
+
+【影片規格】
+鏡頭數：${pi.sc} 個
+總長：${pi.du}（所有鏡頭時長加總必須 = ${secs} 秒）
+
+【畫面規則】
+使用真實產品白底照搭配 AI 動畫，不需真人出鏡。每個鏡頭描述要具體說明產品哪個角度、哪個細節。
+
+只回傳以下 JSON 格式，不要其他文字：
+{"scenes":[{"id":1,"type":"鏡頭類型","description":"畫面描述20-40字，說明產品角度和細節","duration":3,"adCopy":"字卡文案10-20字，必須包含SEO關鍵字","motionNote":"Filmora動畫指示，如：緩慢推近、左右平移"}]}`;
 
   try{
     const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({contents:[{parts:[{text:prompt}]}],generationConfig:{temperature:.7,maxOutputTokens:2048}})});
