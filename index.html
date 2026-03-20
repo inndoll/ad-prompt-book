@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>電商導流影片prompt寶典</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Space+Mono:wght@400;700&display=swap');
+
+  :root {
+    --bg: #0e0e10;
+    --surface: #18181c;
+    --surface2: #222228;
+    --border: #2e2e38;
+    --accent: #f0c040;
+    --accent2: #e07040;
+    --text: #e8e8f0;
+    --text-dim: #7a7a90;
+    --success: #40c080;
+    --danger: #e05060;
+    --radius: 10px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 16px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    letter-spacing: 0.5px;
+  }
+  .logo span { color: var(--accent2); }
+  .step-nav {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+    align-items: center;
+  }
+  .step-btn {
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-family: 'Noto Sans TC', sans-serif;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .step-btn.active {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+    font-weight: 700;
+  }
+  .step-btn.done {
+    border-color: var(--success);
+    color: var(--success);
+  }
+  .step-btn:hover:not(.active) { border-color: var(--text-dim); color: var(--text); }
+
+  /* MAIN */
+  main { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
+
+  /* STEP PANELS */
+  .step-panel { display: none; }
+  .step-panel.active { display: block; }
+
+  .panel-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+  .panel-sub {
+    color: var(--text-dim);
+    margin-bottom: 28px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+
+  /* FORM */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1/-1; }
+  label { font-size: 12px; color: var(--text-dim); font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
+  input, textarea, select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    color: var(--text);
+    padding: 10px 14px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+  input:focus, textarea:focus, select:focus { border-color: var(--accent); }
+  textarea { min-height: 90px; }
+  select option { background: var(--surface2); }
+
+  /* TAG INPUT */
+  .tag-wrap {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    cursor: text;
+    transition: border-color 0.2s;
+    min-height: 44px;
+  }
+  .tag-wrap:focus-within { border-color: var(--accent); }
+  .tag {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 2px 10px 2px 10px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--text);
+  }
+  .tag-del { cursor: pointer; color: var(--text-dim); font-size: 14px; line-height: 1; }
+  .tag-del:hover { color: var(--danger); }
+  .tag-input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 13px;
+    min-width: 120px;
+    flex: 1;
+    padding: 2px 4px;
+  }
+
+  /* BUTTONS */
+  .btn {
+    padding: 10px 22px;
+    border-radius: var(--radius);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary { background: var(--accent); color: #000; }
+  .btn-primary:hover { background: #ffd060; }
+  .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--text-dim); }
+  .btn-success { background: var(--success); color: #000; }
+  .btn-success:hover { background: #60e090; }
+  .btn-danger { background: transparent; color: var(--danger); border: 1px solid var(--danger); }
+  .btn-danger:hover { background: var(--danger); color: #fff; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-row { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; align-items: center; }
+
+  /* LOADING */
+  .loading-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 32px;
+    text-align: center;
+    display: none;
+  }
+  .loading-box.show { display: block; }
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { color: var(--text-dim); font-size: 13px; }
+
+  /* SCENE CARDS */
+  .scenes-container { display: flex; flex-direction: column; gap: 14px; }
+  .scene-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .scene-card.approved { border-color: var(--success); }
+  .scene-card.rejected { border-color: var(--danger); opacity: 0.5; }
+  .scene-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  .scene-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: var(--border);
+    padding: 2px 8px;
+    border-radius: 4px;
+    color: var(--text-dim);
+    min-width: 56px;
+    text-align: center;
+  }
+  .scene-card.approved .scene-num { background: var(--success); color: #000; }
+  .scene-type {
+    font-size: 12px;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .scene-duration {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-left: auto;
+    font-family: 'Space Mono', monospace;
+  }
+  .scene-body { padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .scene-field { display: flex; flex-direction: column; gap: 4px; }
+  .scene-field label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+  .scene-field p {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+  .scene-field input, .scene-field textarea {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+  .scene-actions {
+    display: flex;
+    gap: 8px;
+    padding: 10px 16px;
+    border-top: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .scene-actions .btn { padding: 6px 14px; font-size: 12px; }
+  .approve-btn { background: transparent; border: 1px solid var(--success); color: var(--success); }
+  .approve-btn:hover, .scene-card.approved .approve-btn { background: var(--success); color: #000; }
+  .reject-btn { background: transparent; border: 1px solid var(--border); color: var(--text-dim); }
+  .reject-btn:hover { border-color: var(--danger); color: var(--danger); }
+  .edit-btn { background: transparent; border: 1px solid var(--border); color: var(--text-dim); margin-left: auto; }
+  .edit-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* PROMPT OUTPUT */
+  .prompt-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+  .prompt-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+  }
+  .prompt-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: var(--accent);
+    color: #000;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+  }
+  .prompt-label { font-size: 12px; color: var(--text-dim); }
+  .copy-btn {
+    margin-left: auto;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    cursor: pointer;
+    font-family: 'Noto Sans TC', sans-serif;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .copy-btn.copied { border-color: var(--success); color: var(--success); }
+  .prompt-body {
+    padding: 14px 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .prompt-section { display: flex; flex-direction: column; gap: 6px; }
+  .prompt-section label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.5px; }
+  .prompt-text {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .prompt-section.full { grid-column: 1/-1; }
+
+  /* PROGRESS BAR */
+  .progress-bar-wrap {
+    background: var(--surface2);
+    border-radius: 20px;
+    height: 6px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 20px;
+    transition: width 0.4s ease;
+  }
+
+  /* COPY ALL */
+  .copy-all-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .copy-all-text { font-size: 13px; color: var(--text-dim); }
+  .copy-all-text strong { color: var(--text); }
+
+  /* NOTICE */
+  .notice {
+    background: var(--surface);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    padding: 12px 16px;
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    line-height: 1.7;
+  }
+  .notice strong { color: var(--text); }
+
+  /* DIVIDER */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 24px 0;
+  }
+
+  /* APPROVAL SUMMARY */
+  .approval-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    font-size: 13px;
+  }
+  .approval-count { font-family: 'Space Mono', monospace; font-weight: 700; }
+  .approval-count.green { color: var(--success); }
+  .approval-count.yellow { color: var(--accent); }
+  .approval-count.red { color: var(--danger); }
+
+  /* COPY LINK AREA */
+  .share-box {
+    background: var(--surface2);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  .share-box p { color: var(--text-dim); font-size: 13px; margin-bottom: 12px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .form-grid { grid-template-columns: 1fr; }
+    .prompt-body { grid-template-columns: 1fr; }
+    .step-nav .step-btn { padding: 4px 10px; font-size: 11px; }
+    main { padding: 20px 14px; }
+  }
+
+  /* SETUP SCREEN */
+  .setup-screen {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    z-index: 999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .setup-screen.hidden { display: none; }
+  .setup-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 520px;
+    width: 100%;
+  }
+  .setup-logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .setup-logo span { color: var(--accent2); }
+  .setup-title {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text);
+  }
+  .setup-sub {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 28px;
+    line-height: 1.7;
+  }
+  .setup-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+  .setup-step {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+  }
+  .setup-step-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--accent);
+    color: #000;
+    border-radius: 4px;
+    padding: 2px 7px;
+    min-width: 28px;
+    text-align: center;
+    margin-top: 2px;
+  }
+  .setup-step-content { font-size: 13px; line-height: 1.7; }
+  .setup-step-content strong { color: var(--text); }
+  .setup-step-content a { color: var(--accent); text-decoration: none; }
+  .setup-step-content a:hover { text-decoration: underline; }
+  .api-key-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .api-key-row input {
+    flex: 1;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.5px;
+  }
+  .key-status {
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    min-height: 18px;
+  }
+  .key-status.ok { color: var(--success); }
+  .key-status.err { color: var(--danger); }
+
+  /* SETTINGS MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.hidden { display: none; }
+  .modal-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 460px;
+    width: 100%;
+  }
+  .modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .modal-close {
+    background: none;
+    border: none;
+    color: var(--text-dim);
+    font-size: 20px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 4px;
+  }
+  .modal-close:hover { color: var(--text); }
+  .settings-key-wrap { margin-bottom: 8px; }
+  .settings-hint {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  .settings-hint a { color: var(--accent); text-decoration: none; }
+
+  /* HEADER SETTINGS BTN */
+  .settings-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-family: 'Noto Sans TC', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-left: 8px;
+  }
+  .settings-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .key-indicator {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--danger);
+    display: inline-block;
+    margin-right: 5px;
+  }
+  .key-indicator.ok { background: var(--success); }
+</style>
+</head>
+<body>
+
+<!-- ====== SETUP SCREEN ====== -->
+<div class="setup-screen" id="setupScreen">
+  <div class="setup-box">
+    <div class="setup-logo">電商導流影片<span>prompt寶典</span></div>
+    <div class="setup-title">歡迎！先設定 Gemini API Key 🔑</div>
+    <div class="setup-sub">這個工具使用 Google Gemini API 自動生成分鏡腳本，完全免費，不需要信用卡。Key 只存在你的瀏覽器裡，不會傳到任何地方。</div>
+
+    <div class="setup-steps">
+      <div class="setup-step">
+        <div class="setup-step-num">01</div>
+        <div class="setup-step-content">
+          前往 <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a>，用你朋友家庭帳號的 Google 帳號登入
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="setup-step-num">02</div>
+        <div class="setup-step-content">
+          點「<strong>建立 API 金鑰</strong>」→ 複製產生的 Key（格式是 <code style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent)">AIzaSy...</code>）
+        </div>
+      </div>
+      <div class="setup-step">
+        <div class="setup-step-num">03</div>
+        <div class="setup-step-content">
+          貼入下方欄位，點「儲存並開始」即可。之後不需要重複設定（除非你換瀏覽器）。
+        </div>
+      </div>
+    </div>
+
+    <label style="font-size:12px;color:var(--text-dim);font-weight:500;letter-spacing:0.5px;text-transform:uppercase;display:block;margin-bottom:8px">Gemini API Key</label>
+    <div class="api-key-row">
+      <input type="password" id="setupApiKey" placeholder="AIzaSy..." autocomplete="off">
+      <button class="btn btn-primary" onclick="saveApiKey()">儲存並開始</button>
+    </div>
+    <div class="key-status" id="setupKeyStatus"></div>
+
+    <div style="font-size:12px;color:var(--text-dim);line-height:1.7;border-top:1px solid var(--border);padding-top:16px">
+      💡 <strong style="color:var(--text)">完全免費：</strong>Gemini API 免費方案每天有 1,500 次請求額度，你們一天做幾十支影片都沒問題。Nano Banana 2 生圖用朋友的 Google 訂閱，同樣免費。
+    </div>
+  </div>
+</div>
+
+<!-- ====== SETTINGS MODAL ====== -->
+<div class="modal-overlay hidden" id="settingsModal">
+  <div class="modal-box">
+    <div class="modal-title">
+      ⚙ 設定
+      <button class="modal-close" onclick="closeSettings()">×</button>
+    </div>
+    <label style="font-size:12px;color:var(--text-dim);font-weight:500;letter-spacing:0.5px;text-transform:uppercase;display:block;margin-bottom:8px">Gemini API Key</label>
+    <div class="settings-key-wrap">
+      <input type="password" id="settingsApiKey" placeholder="AIzaSy..." style="width:100%;margin-bottom:8px" autocomplete="off">
+    </div>
+    <div class="settings-hint">
+      Key 儲存在瀏覽器 localStorage，不會上傳。<br>
+      前往 <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com/apikey</a> 取得或更換 Key。
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn btn-primary" onclick="updateApiKey()" style="flex:1">更新 Key</button>
+      <button class="btn btn-danger" onclick="clearApiKey()">清除</button>
+    </div>
+    <div class="key-status" id="settingsKeyStatus" style="margin-top:10px"></div>
+  </div>
+</div>
+
+<header>
+  <div class="logo">電商導流影片<span>prompt寶典</span></div>
+  <div class="step-nav">
+    <button class="step-btn active" onclick="goStep(1)" id="nav1">① 產品資訊</button>
+    <button class="step-btn" onclick="goStep(2)" id="nav2">② 分鏡審核</button>
+    <button class="step-btn" onclick="goStep(3)" id="nav3">③ 提示詞輸出</button>
+  </div>
+  <button class="settings-btn" onclick="openSettings()">
+    <span class="key-indicator" id="keyIndicator"></span>API Key
+  </button>
+</header>
+
+<main>
+
+<!-- ====== STEP 1 ====== -->
+<div class="step-panel active" id="step1">
+  <div class="panel-title">產品資訊輸入</div>
+  <div class="panel-sub">填入產品基本資料，AI 將自動生成結構化分鏡腳本與廣告文案，供客戶審核。</div>
+
+  <div class="form-grid">
+    <div class="form-group">
+      <label>產品名稱 *</label>
+      <input type="text" id="productName" placeholder="例：輕量保溫杯 500ml">
+    </div>
+    <div class="form-group">
+      <label>產品類別</label>
+      <select id="productCat">
+        <option value="生活用品">生活用品</option>
+        <option value="保健食品">保健食品</option>
+        <option value="美妝保養">美妝保養</option>
+        <option value="3C配件">3C配件</option>
+        <option value="服飾配件">服飾配件</option>
+        <option value="食品飲料">食品飲料</option>
+        <option value="家居寢具">家居寢具</option>
+        <option value="運動健身">運動健身</option>
+        <option value="其他">其他</option>
+      </select>
+    </div>
+    <div class="form-group full">
+      <label>產品主要賣點 *（2~5個）</label>
+      <div class="tag-wrap" id="sellPointWrap" onclick="document.getElementById('sellPointInput').focus()">
+        <input type="text" class="tag-input" id="sellPointInput" placeholder="輸入賣點後按 Enter">
+      </div>
+    </div>
+    <div class="form-group full">
+      <label>目標客群</label>
+      <input type="text" id="targetAudience" placeholder="例：25-40歲上班族女性，重視生活品質">
+    </div>
+    <div class="form-group full">
+      <label>SEO 關鍵字（給朋友用，填她指定的）</label>
+      <div class="tag-wrap" id="keywordWrap" onclick="document.getElementById('keywordInput').focus()">
+        <input type="text" class="tag-input" id="keywordInput" placeholder="輸入關鍵字後按 Enter">
+      </div>
+    </div>
+    <div class="form-group">
+      <label>影片鏡頭數</label>
+      <select id="sceneCount">
+        <option value="5">5 鏡</option>
+        <option value="6" selected>6 鏡</option>
+        <option value="7">7 鏡</option>
+        <option value="8">8 鏡</option>
+        <option value="10">10 鏡</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>影片總長度</label>
+      <select id="videoDuration">
+        <option value="15秒">15 秒</option>
+        <option value="20秒" selected>20 秒</option>
+        <option value="30秒">30 秒</option>
+      </select>
+    </div>
+    <div class="form-group full">
+      <label>廣告主要訴求 / 情緒基調</label>
+      <textarea id="adTone" placeholder="例：強調生活感、有溫度、讓人有想擁有的感覺。結尾要有明確的行動呼籲。"></textarea>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="generateScript()" id="generateBtn">
+      ✦ 生成分鏡腳本
+    </button>
+  </div>
+
+  <div class="loading-box" id="loadingBox" style="margin-top:24px">
+    <div class="spinner"></div>
+    <div class="loading-text" id="loadingText">AI 正在生成分鏡腳本，請稍候...</div>
+  </div>
+</div>
+
+<!-- ====== STEP 2 ====== -->
+<div class="step-panel" id="step2">
+  <div class="panel-title">分鏡腳本審核</div>
+  <div class="panel-sub">逐鏡確認內容是否合適，可直接在欄位中修改文字，確認後點「✓ 核准」。全部審核完畢後即可進入下一步。</div>
+
+  <div class="approval-bar" id="approvalBar">
+    <span>審核進度：</span>
+    <span class="approval-count green" id="approvedCount">0</span> 已核准
+    <span style="color:var(--border)">／</span>
+    <span class="approval-count yellow" id="pendingCount">0</span> 待審核
+    <span style="color:var(--border)">／</span>
+    <span class="approval-count red" id="rejectedCount">0</span> 已刪除
+  </div>
+
+  <div class="scenes-container" id="scenesContainer"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goStep(1)">← 重新填寫</button>
+    <button class="btn btn-success" onclick="goToPrompts()" id="toPromptsBtn">產出提示詞 →</button>
+    <button class="btn btn-secondary" onclick="exportScript()" style="margin-left:auto">⬇ 匯出腳本</button>
+  </div>
+</div>
+
+<!-- ====== STEP 3 ====== -->
+<div class="step-panel" id="step3">
+  <div class="panel-title">Nano Banana 2 提示詞輸出</div>
+  <div class="panel-sub">以下是針對 Nano Banana 2 一致性機制設計的逐鏡提示詞，請在 Gemini app 中開啟<strong>同一個對話串</strong>，依序貼入每個鏡頭的提示詞並上傳產品照片，這樣才能啟動跨鏡頭一致性追蹤。</div>
+
+  <div class="notice" id="productConsistencyNote" style="margin-bottom:12px">
+    <strong>🍌 Nano Banana 2 操作三原則：</strong><br>
+    1. 在 Gemini app 選「🍌 生成圖片」工具<br>
+    2. <strong>全程在同一個對話串內</strong>依序貼入每個鏡頭提示詞<br>
+    3. 每個鏡頭都要<strong>重新上傳同一張產品照</strong>作為參考圖，強制鎖定外觀一致性
+  </div>
+
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:24px;font-size:13px;line-height:1.8">
+    <div style="color:var(--accent);font-weight:700;margin-bottom:8px;font-size:12px;text-transform:uppercase;letter-spacing:0.5px">📋 開始前先複製這段「一致性宣告」，貼在對話串的第一則訊息</div>
+    <div id="consistencyDeclaration" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-family:'Space Mono',monospace;font-size:12px;color:var(--text);white-space:pre-wrap;line-height:1.7"></div>
+    <div style="margin-top:10px;display:flex;justify-content:flex-end">
+      <button class="copy-btn" onclick="copyDeclaration(this)">複製一致性宣告</button>
+    </div>
+  </div>
+
+  <div id="promptsContainer"></div>
+
+  <hr class="divider">
+
+  <div class="copy-all-box">
+    <div class="copy-all-text"><strong>廣告字卡文案</strong>（可直接貼入 Filmora 字幕模板）</div>
+    <button class="btn btn-secondary" onclick="copyAdCopy()" id="copyAdCopyBtn" style="font-size:12px;padding:6px 14px">複製全部文案</button>
+  </div>
+  <div id="adCopyContainer" style="display:flex;flex-direction:column;gap:8px"></div>
+
+  <hr class="divider">
+
+  <div class="copy-all-box">
+    <div class="copy-all-text"><strong>🎬 Filmora 剪輯流程備忘</strong></div>
+  </div>
+  <div id="filmoraGuide" style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 20px;font-size:13px;line-height:1.9;color:var(--text-dim)"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-secondary" onclick="goStep(2)">← 回到審核</button>
+    <button class="btn btn-primary" onclick="exportAll()">⬇ 匯出完整工作包</button>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ===== API KEY MANAGEMENT =====
+const API_KEY_STORAGE = 'adflow_gemini_api_key';
+
+function getApiKey() {
+  return localStorage.getItem(API_KEY_STORAGE) || '';
+}
+
+function saveApiKey() {
+  const key = document.getElementById('setupApiKey').value.trim();
+  if (!key.startsWith('AIza')) {
+    document.getElementById('setupKeyStatus').textContent = '⚠ Key 格式不對，應該以 AIzaSy... 開頭';
+    document.getElementById('setupKeyStatus').className = 'key-status err';
+    return;
+  }
+  localStorage.setItem(API_KEY_STORAGE, key);
+  document.getElementById('setupKeyStatus').textContent = '✓ 已儲存！';
+  document.getElementById('setupKeyStatus').className = 'key-status ok';
+  updateKeyIndicator();
+  setTimeout(() => {
+    document.getElementById('setupScreen').classList.add('hidden');
+  }, 800);
+}
+
+function updateApiKey() {
+  const key = document.getElementById('settingsApiKey').value.trim();
+  if (!key.startsWith('AIza')) {
+    document.getElementById('settingsKeyStatus').textContent = '⚠ Key 格式不對，應該以 AIzaSy... 開頭';
+    document.getElementById('settingsKeyStatus').className = 'key-status err';
+    return;
+  }
+  localStorage.setItem(API_KEY_STORAGE, key);
+  document.getElementById('settingsKeyStatus').textContent = '✓ 已更新！';
+  document.getElementById('settingsKeyStatus').className = 'key-status ok';
+  updateKeyIndicator();
+  setTimeout(closeSettings, 1000);
+}
+
+function clearApiKey() {
+  if (!confirm('確定要清除 API Key 嗎？')) return;
+  localStorage.removeItem(API_KEY_STORAGE);
+  document.getElementById('settingsApiKey').value = '';
+  document.getElementById('settingsKeyStatus').textContent = '已清除，請重新輸入 Key';
+  document.getElementById('settingsKeyStatus').className = 'key-status err';
+  updateKeyIndicator();
+}
+
+function updateKeyIndicator() {
+  const has = !!getApiKey();
+  document.getElementById('keyIndicator').className = 'key-indicator' + (has ? ' ok' : '');
+}
+
+function openSettings() {
+  const key = getApiKey();
+  document.getElementById('settingsApiKey').value = key ? '••••••••••••••••' : '';
+  document.getElementById('settingsKeyStatus').textContent = key ? '✓ 目前已設定 Key' : '尚未設定 Key';
+  document.getElementById('settingsKeyStatus').className = 'key-status' + (key ? ' ok' : ' err');
+  document.getElementById('settingsModal').classList.remove('hidden');
+}
+
+function closeSettings() {
+  document.getElementById('settingsModal').classList.add('hidden');
+  document.getElementById('settingsKeyStatus').textContent = '';
+}
+
+// 點外部關閉 modal
+document.addEventListener('click', e => {
+  const modal = document.getElementById('settingsModal');
+  if (!modal.classList.contains('hidden') && e.target === modal) closeSettings();
+});
+
+// 初始化：檢查是否已有 Key
+window.addEventListener('DOMContentLoaded', () => {
+  const key = getApiKey();
+  if (key) {
+    document.getElementById('setupScreen').classList.add('hidden');
+  }
+  updateKeyIndicator();
+});
+
+// Enter 鍵送出 setup
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !document.getElementById('setupScreen').classList.contains('hidden')) {
+    saveApiKey();
+  }
+});
+
+
+let scenes = [];
+let productInfo = {};
+
+// ===== TAG INPUT =====
+function initTagInput(wrapId, inputId) {
+  const input = document.getElementById(inputId);
+  input.addEventListener('keydown', e => {
+    if ((e.key === 'Enter' || e.key === ',') && input.value.trim()) {
+      e.preventDefault();
+      addTag(wrapId, inputId, input.value.trim());
+      input.value = '';
+    }
+    if (e.key === 'Backspace' && !input.value) {
+      const tags = document.querySelectorAll(`#${wrapId} .tag`);
+      if (tags.length) tags[tags.length-1].remove();
+    }
+  });
+}
+function addTag(wrapId, inputId, text) {
+  const wrap = document.getElementById(wrapId);
+  const tag = document.createElement('div');
+  tag.className = 'tag';
+  tag.innerHTML = `${text}<span class="tag-del" onclick="this.parentElement.remove()">×</span>`;
+  wrap.insertBefore(tag, document.getElementById(inputId));
+}
+function getTags(wrapId) {
+  return [...document.querySelectorAll(`#${wrapId} .tag`)].map(t => t.childNodes[0].textContent.trim());
+}
+initTagInput('sellPointWrap', 'sellPointInput');
+initTagInput('keywordWrap', 'keywordInput');
+
+// ===== NAVIGATION =====
+function goStep(n) {
+  document.querySelectorAll('.step-panel').forEach((p,i) => p.classList.toggle('active', i+1===n));
+  document.querySelectorAll('.step-btn').forEach((b,i) => b.classList.toggle('active', i+1===n));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ===== GENERATE SCRIPT =====
+async function generateScript() {
+  const name = document.getElementById('productName').value.trim();
+  if (!name) { alert('請輸入產品名稱！'); return; }
+
+  const sellPoints = getTags('sellPointWrap');
+  if (!sellPoints.length) { alert('請至少輸入一個賣點！'); return; }
+
+  productInfo = {
+    name,
+    category: document.getElementById('productCat').value,
+    sellPoints,
+    targetAudience: document.getElementById('targetAudience').value.trim(),
+    keywords: getTags('keywordWrap'),
+    sceneCount: parseInt(document.getElementById('sceneCount').value),
+    duration: document.getElementById('videoDuration').value,
+    tone: document.getElementById('adTone').value.trim(),
+  };
+
+  const apiKey = getApiKey();
+  if (!apiKey) {
+    alert('請先設定 Gemini API Key！點右上角「API Key」按鈕設定。');
+    return;
+  }
+
+  document.getElementById('generateBtn').disabled = true;
+  document.getElementById('loadingBox').classList.add('show');
+
+  const prompt = buildPrompt(productInfo);
+
+  try {
+    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: { temperature: 0.7, maxOutputTokens: 2048 }
+      })
+    });
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error.message);
+    const text = data.candidates[0].content.parts[0].text;
+    const clean = text.replace(/```json|```/g, '').trim();
+    const parsed = JSON.parse(clean);
+    scenes = parsed.scenes;
+    renderScenes();
+    goStep(2);
+  } catch(e) {
+    alert('生成失敗，請再試一次。錯誤：' + e.message);
+  } finally {
+    document.getElementById('generateBtn').disabled = false;
+    document.getElementById('loadingBox').classList.remove('show');
+  }
+}
+
+function buildPrompt(p) {
+  return `你是一位專業的電商廣告影片腳本策劃師。請根據以下產品資訊，生成一份結構化的廣告影片分鏡腳本，用於 Google Ads 影片廣告。
+
+產品名稱：${p.name}
+產品類別：${p.category}
+主要賣點：${p.sellPoints.join('、')}
+目標客群：${p.targetAudience || '一般消費者'}
+SEO關鍵字：${p.keywords.length ? p.keywords.join('、') : '無'}
+影片鏡頭數：${p.sceneCount} 個鏡頭
+影片總長：${p.duration}
+廣告訴求與基調：${p.tone || '自然、有質感、有購買慾望'}
+
+請生成 ${p.sceneCount} 個鏡頭的分鏡腳本，每個鏡頭包含：
+- 鏡頭類型（如：產品特寫、使用情境、細節展示、品牌結尾等）
+- 畫面描述（具體描述畫面內容，20~40字）
+- 鏡頭時長（秒數，所有鏡頭加總等於${p.duration.replace('秒','')}秒）
+- 廣告文案（畫面上顯示的字卡文字，10~20字，要自然融入SEO關鍵字）
+- 動作描述（Filmora AI 生成動畫的鏡頭運動指示，如：緩慢推近、左右平移等）
+
+注意：這是使用真實產品白底照片搭配 AI 動畫生成的影片，所有畫面描述都應以「展示產品照片+鏡頭運動」為主，不需要真人出鏡。
+
+請只回傳以下 JSON 格式，不要有其他文字：
+{
+  "scenes": [
+    {
+      "id": 1,
+      "type": "鏡頭類型",
+      "description": "畫面描述",
+      "duration": 3,
+      "adCopy": "廣告字卡文案",
+      "motionNote": "Filmora動畫指示"
+    }
+  ]
+}`;
+}
+
+// ===== RENDER SCENES =====
+function renderScenes() {
+  const container = document.getElementById('scenesContainer');
+  container.innerHTML = '';
+  scenes.forEach((s, i) => {
+    s.status = s.status || 'pending';
+    container.appendChild(createSceneCard(s, i));
+  });
+  updateApprovalBar();
+}
+
+function createSceneCard(s, i) {
+  const card = document.createElement('div');
+  card.className = `scene-card ${s.status === 'approved' ? 'approved' : s.status === 'rejected' ? 'rejected' : ''}`;
+  card.id = `scene-card-${i}`;
+  card.innerHTML = `
+    <div class="scene-header">
+      <span class="scene-num">鏡頭 ${s.id}</span>
+      <span class="scene-type">${s.type}</span>
+      <span class="scene-duration">${s.duration}秒</span>
+    </div>
+    <div class="scene-body">
+      <div class="scene-field">
+        <label>畫面描述</label>
+        <textarea id="desc-${i}" rows="2">${s.description}</textarea>
+      </div>
+      <div class="scene-field">
+        <label>廣告字卡文案</label>
+        <input type="text" id="copy-${i}" value="${s.adCopy}">
+      </div>
+      <div class="scene-field">
+        <label>Filmora 動畫指示</label>
+        <input type="text" id="motion-${i}" value="${s.motionNote}">
+      </div>
+    </div>
+    <div class="scene-actions">
+      <button class="btn approve-btn" onclick="approveScene(${i})">${s.status === 'approved' ? '✓ 已核准' : '✓ 核准'}</button>
+      <button class="btn reject-btn" onclick="rejectScene(${i})">${s.status === 'rejected' ? '✗ 已刪除' : '✗ 刪除'}</button>
+      <button class="btn edit-btn" onclick="saveScene(${i})">儲存修改</button>
+    </div>
+  `;
+  return card;
+}
+
+function saveScene(i) {
+  scenes[i].description = document.getElementById(`desc-${i}`).value;
+  scenes[i].adCopy = document.getElementById(`copy-${i}`).value;
+  scenes[i].motionNote = document.getElementById(`motion-${i}`).value;
+  const btn = document.querySelector(`#scene-card-${i} .edit-btn`);
+  btn.textContent = '✓ 已儲存';
+  setTimeout(() => btn.textContent = '儲存修改', 1500);
+}
+
+function approveScene(i) {
+  saveScene(i);
+  scenes[i].status = scenes[i].status === 'approved' ? 'pending' : 'approved';
+  renderScenes();
+}
+
+function rejectScene(i) {
+  scenes[i].status = scenes[i].status === 'rejected' ? 'pending' : 'rejected';
+  renderScenes();
+}
+
+function updateApprovalBar() {
+  const approved = scenes.filter(s => s.status === 'approved').length;
+  const rejected = scenes.filter(s => s.status === 'rejected').length;
+  const pending = scenes.filter(s => s.status === 'pending').length;
+  document.getElementById('approvedCount').textContent = approved;
+  document.getElementById('rejectedCount').textContent = rejected;
+  document.getElementById('pendingCount').textContent = pending;
+}
+
+// ===== PROMPTS =====
+function goToPrompts() {
+  const approved = scenes.filter(s => s.status === 'approved');
+  if (!approved.length) { alert('請至少核准一個鏡頭！'); return; }
+  renderPrompts(approved);
+  goStep(3);
+}
+
+function buildConsistencyDeclaration() {
+  return `【產品一致性宣告 — 請在第一則訊息貼入】
+
+我要製作「${productInfo.name}」的廣告影片，共 ${scenes.filter(s=>s.status==='approved').length} 個鏡頭。
+
+⚠ 重要指示：
+- 我會在這個對話串中依序生成所有鏡頭
+- 每次我都會附上同一張產品參考照片
+- 請在每個鏡頭中完整保留產品的外觀、顏色、形狀、材質與所有細節
+- 不得改變產品本身的任何視覺特徵
+- 只改變背景、構圖角度、光線與場景氛圍
+
+產品資訊：
+- 品名：${productInfo.name}
+- 類別：${productInfo.category}
+- 賣點：${productInfo.sellPoints.join('、')}`;
+}
+
+function buildNanoBananaPrompt(s, index, total) {
+  const isFirst = index === 0;
+  const referenceNote = isFirst
+    ? '（這是第一個鏡頭，請記住這張產品照的所有細節）'
+    : `（這是第 ${index+1}/${total} 個鏡頭，請與先前鏡頭保持完全相同的產品外觀）`;
+
+  return `【鏡頭 ${s.id}／${total}】${referenceNote}
+
+📎 請上傳產品白底照作為參考圖
+
+指示：
+請以附件的產品照為主體，完整保留產品外觀，生成以下場景：
+
+${s.description}
+
+構圖要求：
+- 鏡頭類型：${s.type}
+- 畫面焦點：突出產品的主要特徵
+- 背景風格：乾淨、適合廣告用途
+- 比例：16:9（橫式）
+- 解析度：4K
+
+⚠ 產品一致性指示：
+維持參考照片中產品的完整外觀，包括顏色、形狀、材質、尺寸比例，不得有任何改動。`;
+}
+
+function renderPrompts(approvedScenes) {
+  const container = document.getElementById('promptsContainer');
+  container.innerHTML = '';
+  const adCopyContainer = document.getElementById('adCopyContainer');
+  adCopyContainer.innerHTML = '';
+
+  // 填入一致性宣告
+  document.getElementById('consistencyDeclaration').textContent = buildConsistencyDeclaration();
+
+  const total = approvedScenes.length;
+
+  approvedScenes.forEach((s, i) => {
+    const nbPrompt = buildNanoBananaPrompt(s, i, total);
+    const card = document.createElement('div');
+    card.className = 'prompt-card';
+    card.innerHTML = `
+      <div class="prompt-header">
+        <span class="prompt-num">鏡頭 ${s.id}</span>
+        <span class="prompt-label">${s.type}｜${s.duration}秒</span>
+        <button class="copy-btn" onclick="copyPrompt(this, ${i})">複製提示詞</button>
+      </div>
+      <div class="prompt-body">
+        <div class="prompt-section full">
+          <label>🍌 Nano Banana 2 提示詞（貼入 Gemini 對話串）</label>
+          <div class="prompt-text" id="imgPrompt-${i}">${nbPrompt}</div>
+        </div>
+        <div class="prompt-section">
+          <label>🎬 Filmora 動畫指示</label>
+          <div class="prompt-text">上傳：生成好的鏡頭 ${s.id} 圖片
+功能：圖生影片
+鏡頭運動：${s.motionNote}
+時長：${s.duration} 秒</div>
+        </div>
+        <div class="prompt-section">
+          <label>💬 廣告字卡文案</label>
+          <div class="prompt-text">${s.adCopy}</div>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+
+    const copyCard = document.createElement('div');
+    copyCard.style.cssText = 'background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px';
+    copyCard.innerHTML = `
+      <span style="font-size:12px;color:var(--text-dim);font-family:'Space Mono',monospace;min-width:60px">鏡頭 ${s.id}</span>
+      <span style="font-size:13px;color:var(--text);flex:1">${s.adCopy}</span>
+      <button class="copy-btn" onclick="copyText(this,'${s.adCopy.replace(/'/g,"\\'")}')">複製</button>
+    `;
+    adCopyContainer.appendChild(copyCard);
+  });
+
+  // Filmora 流程備忘
+  const guide = document.getElementById('filmoraGuide');
+  guide.innerHTML = approvedScenes.map((s,i) => `
+    <div style="display:flex;gap:10px;align-items:flex-start;padding:6px 0;border-bottom:1px solid var(--border)">
+      <span style="font-family:'Space Mono',monospace;font-size:11px;color:var(--accent);min-width:52px;padding-top:2px">Step ${i+1}</span>
+      <span>匯入鏡頭 ${s.id} 圖片 → 圖生影片 → <strong style="color:var(--text)">${s.motionNote}</strong> → ${s.duration}秒 → 套字卡文案：「${s.adCopy}」</span>
+    </div>
+  `).join('') + `
+    <div style="padding-top:12px;color:var(--success)">✓ 所有鏡頭完成後，依序排列剪輯、加背景音樂、輸出 MP4</div>
+  `;
+}
+
+function buildImagePrompt(s) {
+  return buildNanoBananaPrompt(s, 0, 1);
+}
+
+function copyDeclaration(btn) {
+  const text = document.getElementById('consistencyDeclaration').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ 已複製！';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '複製一致性宣告'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+
+  const text = document.getElementById(`imgPrompt-${i}`).textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ 已複製';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '複製提示詞'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function copyText(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '複製'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function copyAdCopy() {
+  const approved = scenes.filter(s => s.status === 'approved');
+  const text = approved.map((s,i) => `鏡頭${s.id}：${s.adCopy}`).join('\n');
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyAdCopyBtn');
+    btn.textContent = '✓ 已複製！';
+    setTimeout(() => btn.textContent = '複製全部文案', 2000);
+  });
+}
+
+// ===== EXPORT =====
+function exportScript() {
+  const lines = [`【${productInfo.name}】廣告影片分鏡腳本\n`, `影片長度：${productInfo.duration}　鏡頭數：${productInfo.sceneCount}\n`, '---\n'];
+  scenes.forEach(s => {
+    if (s.status !== 'rejected') {
+      lines.push(`鏡頭 ${s.id}｜${s.type}｜${s.duration}秒`);
+      lines.push(`畫面：${s.description}`);
+      lines.push(`文案：${s.adCopy}`);
+      lines.push(`動畫：${s.motionNote}`);
+      lines.push(`狀態：${s.status === 'approved' ? '✓ 已核准' : '待審核'}\n`);
+    }
+  });
+  download(`${productInfo.name}-分鏡腳本.txt`, lines.join('\n'));
+}
+
+function exportAll() {
+  const approved = scenes.filter(s => s.status === 'approved');
+  const lines = [
+    `【${productInfo.name}】廣告影片製作工作包`,
+    `生成日期：${new Date().toLocaleDateString('zh-TW')}`,
+    `\n${'='.repeat(40)}`,
+    `\n步驟一：在 Gemini app 開新對話，選「🍌生成圖片」`,
+    `貼入以下一致性宣告作為第一則訊息：\n`,
+    buildConsistencyDeclaration(),
+    `\n${'='.repeat(40)}`,
+    `\n步驟二：依序貼入每個鏡頭提示詞（記得每次都上傳同一張產品照）\n`
+  ];
+  approved.forEach((s,i) => {
+    lines.push(`\n--- 鏡頭 ${s.id}：${s.type}（${s.duration}秒）---`);
+    lines.push(buildNanoBananaPrompt(s, i, approved.length));
+    lines.push(`\nFilmora動畫指示：${s.motionNote}`);
+    lines.push(`廣告字卡文案：${s.adCopy}`);
+  });
+  lines.push(`\n${'='.repeat(40)}`);
+  lines.push(`\n步驟三：Filmora 剪輯流程`);
+  approved.forEach((s,i) => {
+    lines.push(`Step ${i+1}. 匯入鏡頭${s.id}圖 → 圖生影片 → ${s.motionNote} → ${s.duration}秒 → 字卡：「${s.adCopy}」`);
+  });
+  download(`${productInfo.name}-製作工作包.txt`, lines.join('\n'));
+}
+
+function download(filename, text) {
+  const a = document.createElement('a');
+  a.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(text);
+  a.download = filename;
+  a.click();
+}
+</script>
+</body>
+</html>
