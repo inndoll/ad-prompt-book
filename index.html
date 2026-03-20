@@ -813,19 +813,45 @@
 const API_KEY_STORAGE = 'adflow_gemini_api_key';
 
 function getApiKey() {
-  return localStorage.getItem(API_KEY_STORAGE) || '';
+  try {
+    return localStorage.getItem(API_KEY_STORAGE) || '';
+  } catch(e) {
+    return sessionStorage.getItem(API_KEY_STORAGE) || '';
+  }
+}
+
+function storeApiKey(key) {
+  try {
+    localStorage.setItem(API_KEY_STORAGE, key);
+  } catch(e) {
+    sessionStorage.setItem(API_KEY_STORAGE, key);
+  }
+}
+
+function removeApiKey() {
+  try { localStorage.removeItem(API_KEY_STORAGE); } catch(e) {}
+  try { sessionStorage.removeItem(API_KEY_STORAGE); } catch(e) {}
 }
 
 function saveApiKey() {
-  const key = document.getElementById('setupApiKey').value.trim();
-  if (!key.startsWith('AIza')) {
-    document.getElementById('setupKeyStatus').textContent = '⚠ Key 格式不對，應該以 AIzaSy... 開頭';
-    document.getElementById('setupKeyStatus').className = 'key-status err';
+  const input = document.getElementById('setupApiKey');
+  const status = document.getElementById('setupKeyStatus');
+  const key = input.value.trim();
+
+  if (!key) {
+    status.textContent = '⚠ 請先貼入你的 API Key';
+    status.className = 'key-status err';
     return;
   }
-  localStorage.setItem(API_KEY_STORAGE, key);
-  document.getElementById('setupKeyStatus').textContent = '✓ 已儲存！';
-  document.getElementById('setupKeyStatus').className = 'key-status ok';
+  if (!key.startsWith('AIza')) {
+    status.textContent = '⚠ Key 格式不對，應該以 AIzaSy... 開頭，請重新複製';
+    status.className = 'key-status err';
+    return;
+  }
+
+  storeApiKey(key);
+  status.textContent = '✓ 已儲存！正在進入...';
+  status.className = 'key-status ok';
   updateKeyIndicator();
   setTimeout(() => {
     document.getElementById('setupScreen').classList.add('hidden');
@@ -833,22 +859,30 @@ function saveApiKey() {
 }
 
 function updateApiKey() {
-  const key = document.getElementById('settingsApiKey').value.trim();
-  if (!key.startsWith('AIza')) {
-    document.getElementById('settingsKeyStatus').textContent = '⚠ Key 格式不對，應該以 AIzaSy... 開頭';
-    document.getElementById('settingsKeyStatus').className = 'key-status err';
+  const input = document.getElementById('settingsApiKey');
+  const status = document.getElementById('settingsKeyStatus');
+  const key = input.value.trim();
+
+  if (!key || key.includes('•')) {
+    status.textContent = '⚠ 請輸入新的 Key（不是遮罩符號）';
+    status.className = 'key-status err';
     return;
   }
-  localStorage.setItem(API_KEY_STORAGE, key);
-  document.getElementById('settingsKeyStatus').textContent = '✓ 已更新！';
-  document.getElementById('settingsKeyStatus').className = 'key-status ok';
+  if (!key.startsWith('AIza')) {
+    status.textContent = '⚠ Key 格式不對，應該以 AIzaSy... 開頭';
+    status.className = 'key-status err';
+    return;
+  }
+  storeApiKey(key);
+  status.textContent = '✓ 已更新！';
+  status.className = 'key-status ok';
   updateKeyIndicator();
   setTimeout(closeSettings, 1000);
 }
 
 function clearApiKey() {
   if (!confirm('確定要清除 API Key 嗎？')) return;
-  localStorage.removeItem(API_KEY_STORAGE);
+  removeApiKey();
   document.getElementById('settingsApiKey').value = '';
   document.getElementById('settingsKeyStatus').textContent = '已清除，請重新輸入 Key';
   document.getElementById('settingsKeyStatus').className = 'key-status err';
